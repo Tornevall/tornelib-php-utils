@@ -19,6 +19,67 @@ class Security
     }
 
     /**
+     * Get trimmed data from ini file
+     * @param $key
+     * @return string
+     * @since 6.1.0
+     */
+    public function getIni($key)
+    {
+        return trim(ini_get($key));
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     * @since 6.1.0
+     */
+    public function getDisabledFunction($key)
+    {
+        $return = false;
+
+        $functionList = array_map("strtolower", $this->getIniArray('disable_functions'));
+        if (in_array($key, $functionList)) {
+            $return = true;
+        }
+
+        return $return;
+    }
+
+    /**
+     * Get proper boolean value from php.ini.
+     *
+     * @return bool
+     * @since 6.1.0
+     */
+    public function getIniBoolean($key)
+    {
+        return (bool)(filter_var($this->getIni($key), FILTER_VALIDATE_BOOLEAN));
+    }
+
+    /**
+     * @param $key
+     * @param array $delimiter
+     * @return array
+     * @since 6.1.0
+     */
+    public function getIniArray($key, $delimiter = [','])
+    {
+        if (is_string($delimiter)) {
+            $delimiter = (array)$delimiter;
+        }
+
+        return array_map(
+            'trim', preg_split(
+                sprintf(
+                    '/[%s]/',
+                    implode('', $delimiter)
+                ),
+                $this->getIni($key))
+        );
+    }
+
+    /**
      * Determine if PHP is in safe mode.
      *
      * @param bool $mockedSafeMode
@@ -32,7 +93,7 @@ class Security
             return false;
         }
 
-        return (bool)(filter_var(ini_get('safe_mode'), FILTER_VALIDATE_BOOLEAN));
+        return (bool)(filter_var($this->getIniBoolean('safe_mode'), FILTER_VALIDATE_BOOLEAN));
     }
 
     /**
@@ -43,7 +104,7 @@ class Security
     {
         // In netcurl 6.0 we also checked safe mode in this method. But since safe mode was removed from PHP 5.4.0
         // this check is also removed from this module.
-        $currentBaseDir = trim(ini_get('open_basedir'));
+        $currentBaseDir = $this->getIni('open_basedir');
         if ($currentBaseDir == '') {
             return false;
         }
@@ -53,7 +114,7 @@ class Security
 
     /**
      * @return mixed
-     * @since 6.1
+     * @since 6.1.0
      */
     public static function getIsSafe()
     {
