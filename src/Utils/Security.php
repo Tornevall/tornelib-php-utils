@@ -38,10 +38,21 @@ class Security
     {
         $return = false;
 
-        $functionList = array_map("strtolower", $this->getIniArray('disable_functions'));
-        if (in_array($key, $functionList)) {
-            $return = true;
+        if (is_array($key)) {
+            foreach ($key as $fKey) {
+                $functionList = array_map("strtolower", $this->getIniArray('disable_functions'));
+                if (in_array($fKey, $functionList)) {
+                    $return = true;
+                    break;
+                }
+            }
+        } else {
+            $functionList = array_map("strtolower", $this->getIniArray('disable_functions'));
+            if (in_array($key, $functionList)) {
+                $return = true;
+            }
         }
+
 
         return $return;
     }
