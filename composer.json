@@ -3,7 +3,10 @@
     "description": "Utils that many of the TorneLIB-based libraries may need.",
     "minimum-stability": "dev",
     "license": "Apache-2.0",
-    "require": {},
+    "require": {
+        "tornevall/tornelib-php-errorhandler": "dev-master",
+        "tornevall/tornelib-php-io": "dev-develop/6.1"
+    },
     "authors": [
         {
             "name": "Tomas Tornevall",
