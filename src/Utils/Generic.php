@@ -2,6 +2,9 @@
 
 namespace TorneLIB\Utils;
 
+use ReflectionClass;
+use ReflectionException;
+
 /**
  * Class Generic Generic functions
  * @package TorneLIB\Utils
@@ -12,26 +15,88 @@ class Generic
 {
 
     /**
-     * @return string
+     * Generic constructor.
+     * @since 6.1.0
      */
-    public function getVersionByClassDoc()
+    public function __construct()
+    {
+        return $this;
+    }
+
+    /**
+     * @param $item
+     * @param $functionName
+     * @return string
+     * @throws ReflectionException
+     * @since 6.1.0
+     */
+    private function getExtractedDocBlock(
+        $item,
+        $functionName
+    ) {
+        $doc = new ReflectionClass(__CLASS__);
+
+        if (empty($functionName)) {
+            $return = $doc->getDocComment();
+        } else {
+            $return = $doc->getMethod($functionName)->getDocComment();
+        }
+
+        return (string)$return;
+    }
+
+    /**
+     * @param $item
+     * @param $doc
+     * @return string
+     * @since 6.1.0
+     */
+    private function getExtractedDocBlockItem($item, $doc)
     {
         $return = '';
 
-        $doc = @(new \ReflectionClass(__CLASS__))->getDocComment();
         if (!empty($doc)) {
-            @preg_match_all('/@version\s(\w.+)\n/s', $doc, $version);
-            if (isset($version[1]) && isset($version[1][0])) {
-                $return = $version[1][0];
+            preg_match_all(sprintf('/%s\s(\w.+)\n/s', $item), $doc, $docBlock);
+
+            if (isset($docBlock[1]) && isset($docBlock[1][0])) {
+                $return = $docBlock[1][0];
 
                 // Strip stuff after line breaks
-                if (preg_match('/\n|\r/', $return)) {
-                    $multiRowData = preg_split('/\n|\r/', $return);
-                    $return = $multiRowData[0];
+                if (preg_match('/[\n\r]/', $return)) {
+                    $multiRowData = preg_split('/[\n\r]/', $return);
+                    $return = isset($multiRowData[0]) ? $multiRowData[0] : '';
                 }
             }
         }
-        
-        return $return;
+
+        return (string)$return;
+    }
+
+    /**
+     * @param $item
+     * @param string $functionName
+     * @return string
+     * @throws ReflectionException
+     * @since 6.1.0
+     */
+    public function getDocBlockItem($item, $functionName = '')
+    {
+        return (string)$this->getExtractedDocBlockItem(
+            $item,
+            $this->getExtractedDocBlock(
+                $item,
+                $functionName
+            )
+        );
+    }
+
+    /**
+     * @return string
+     * @throws ReflectionException
+     * @since 6.1.0
+     */
+    public function getVersionByClassDoc()
+    {
+        return $this->getDocBlockItem('@version');
     }
 }
