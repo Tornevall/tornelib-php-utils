@@ -26,7 +26,7 @@ class Generic
     /**
      * @param $item
      * @param $functionName
-     * @return false|string
+     * @return string
      * @throws ReflectionException
      * @since 6.1.0
      */
@@ -42,13 +42,13 @@ class Generic
             $return = $doc->getMethod($functionName)->getDocComment();
         }
 
-        return $return;
+        return (string)$return;
     }
 
     /**
      * @param $item
      * @param $doc
-     * @return mixed|string
+     * @return string
      * @since 6.1.0
      */
     private function getExtractedDocBlockItem($item, $doc)
@@ -69,19 +69,19 @@ class Generic
             }
         }
 
-        return $return;
+        return (string)$return;
     }
 
     /**
      * @param $item
      * @param string $functionName
-     * @return mixed|string
+     * @return string
      * @throws ReflectionException
      * @since 6.1.0
      */
     public function getDocBlockItem($item, $functionName = '')
     {
-        return $this->getExtractedDocBlockItem(
+        return (string)$this->getExtractedDocBlockItem(
             $item,
             $this->getExtractedDocBlock(
                 $item,
