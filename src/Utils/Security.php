@@ -12,6 +12,7 @@ class Security
 
     /**
      * Security constructor.
+     * @since 6.1.0
      */
     public function __construct()
     {
@@ -60,6 +61,7 @@ class Security
     /**
      * Get proper boolean value from php.ini.
      *
+     * @param $key
      * @return bool
      * @since 6.1.0
      */
@@ -93,7 +95,6 @@ class Security
     /**
      * Determine if PHP is in safe mode.
      *
-     * @param bool $mockedSafeMode
      * @return bool
      * @since 6.1.0
      */

@@ -9,6 +9,7 @@ class Ini
      *
      * @param $setting
      * @return bool
+     * @since 6.1.0
      */
     public function getIniSettable($setting)
     {

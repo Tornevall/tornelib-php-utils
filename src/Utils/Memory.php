@@ -7,11 +7,21 @@ use TorneLIB\Exception\Constants;
 use TorneLIB\Exception\ExceptionHandler;
 use TorneLIB\IO\Data\Strings;
 
+/**
+ * Class Memory
+ * @package TorneLIB\Utils
+ * @version 6.1.0
+ * @since 6.1.0
+ */
 class Memory
 {
     private $IO;
     private $INI;
 
+    /**
+     * Memory constructor.
+     * @since 6.1.0
+     */
     public function __construct()
     {
         $this->IO = new Strings();
@@ -25,6 +35,7 @@ class Memory
      *
      * @param string $newLimitValue
      * @return bool
+     * @since 6.1.0
      */
     public function setMemoryLimit($newLimitValue = '512M')
     {
@@ -47,6 +58,7 @@ class Memory
      * @param string $maxLimit
      * @return bool
      * @throws Exception
+     * @since 6.1.0
      */
     public function getMemoryLimitAdjusted($minLimit = '256M', $maxLimit = '-1')
     {
@@ -69,6 +81,7 @@ class Memory
 
     /**
      * @return bool
+     * @since 6.1.0
      */
     public function getHaltOnLowMemory()
     {
@@ -77,6 +90,7 @@ class Memory
 
     /**
      * @param bool $haltOnLowMemory
+     * @since 6.1.0
      */
     public function setHaltOnLowMemory($haltOnLowMemory)
     {
