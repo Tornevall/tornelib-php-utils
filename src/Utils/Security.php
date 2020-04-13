@@ -13,7 +13,6 @@ use TorneLIB\Exception\ExceptionHandler;
  */
 class Security
 {
-
     /**
      * Security constructor.
      * @since 6.1.0
@@ -178,7 +177,7 @@ class Security
                 $return = true;
         }
 
-        if ($throw && !is_null($code) && $code && !empty($errorMessage)) {
+        if ($throw && !empty($errorMessage)) {
             throw new ExceptionHandler(
                 $errorMessage,
                 $code
@@ -186,6 +185,18 @@ class Security
         }
 
         return $return;
+    }
+
+    /**
+     * Collective method, inherited from Generic.
+     *
+     * @param $classFile
+     * @return bool
+     * since 6.1.0
+     */
+    public function getStreamPath($classFile)
+    {
+        return (new Generic())->getStreamPath($classFile);
     }
 
     /**
@@ -208,6 +219,16 @@ class Security
     public static function getCurrentFunctionState($functionName, $throwable = true)
     {
         return (new Security())->getFunctionState($functionName, $throwable);
+    }
+
+    /**
+     * @param $classFile
+     * @return bool
+     * @since 6.1.0
+     */
+    public static function getCurrentStreamPath($classFile)
+    {
+        return (new Generic())->getStreamPath($classFile);
     }
 
     /**
