@@ -2,6 +2,9 @@
 
 namespace TorneLIB\Utils;
 
+use TorneLIB\Exception\Constants;
+use TorneLIB\Exception\ExceptionHandler;
+
 /**
  * Class Security
  * @package TorneLIB\Utils
@@ -40,9 +43,9 @@ class Security
         $return = false;
 
         if (is_array($key)) {
-            foreach ($key as $fKey) {
+            foreach ($key as $functionName) {
                 $functionList = array_map("strtolower", $this->getIniArray('disable_functions'));
-                if (in_array($fKey, $functionList)) {
+                if (in_array($functionName, $functionList)) {
                     $return = true;
                     break;
                 }
@@ -54,8 +57,109 @@ class Security
             }
         }
 
+        return $return;
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     * @since 6.1.0
+     */
+    public function getDisabledClass($key)
+    {
+        $return = false;
+
+        if (is_array($key)) {
+            foreach ($key as $className) {
+                $classList = array_map("strtolower", $this->getIniArray('disable_classes'));
+                if (in_array(strtolower($className), $classList)) {
+                    $return = true;
+                    break;
+                }
+            }
+        } else {
+            $classList = array_map("strtolower", $this->getIniArray('disable_classes'));
+            if (in_array(strtolower($key), $classList)) {
+                $return = true;
+            }
+        }
 
         return $return;
+    }
+
+    /**
+     * @param $className
+     * @return string
+     */
+    public function getClassState($className, $throw = true)
+    {
+        $code = Constants::LIB_NO_ERROR;
+
+        if (!class_exists($className)) {
+            $code = Constants::LIB_CLASS_UNAVAILABLE;
+        }
+        if ($this->getDisabledClass($className)) {
+            $code = Constants::LIB_CLASS_DISABLED;
+        }
+
+        $errorMessage = "";
+        switch ($code) {
+            case Constants::LIB_CLASS_UNAVAILABLE:
+                $errorMessage = sprintf(
+                    'Class %s is %s: Not available on this platform.',
+                    $className,
+                    'missing'
+                );
+                break;
+            case Constants::LIB_CLASS_DISABLED:
+                $errorMessage = sprintf(
+                    'Class %s is %s: It has been disabled on this platform.',
+                    $className,
+                    'disabled'
+                );
+            default:
+                // Proceed.
+                break;
+        }
+
+        if (!empty($errorMessage) && $throw) {
+            throw new ExceptionHandler(
+                sprintf(
+                    'ClassTestException: %s',
+                    $errorMessage
+                ),
+                $code
+            );
+        }
+
+        return $code;
+    }
+
+    /**
+     * @param $className
+     * @return string
+     */
+    public static function getCurrentClassState($className, $throwable = true)
+    {
+        return (new Security())->getClassState($className, $throwable);
+    }
+
+    /**
+     * @param $className
+     * @return bool
+     */
+    public static function getIsDisabledClass($className)
+    {
+        return (new Security())->getDisabledClass($className);
+    }
+
+    /**
+     * @param $functionName
+     * @return bool
+     */
+    public static function getIsDisabledFunction($functionName)
+    {
+        return (new Security())->getDisabledFunction($functionName);
     }
 
     /**
