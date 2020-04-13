@@ -3,7 +3,10 @@
 require_once(__DIR__ . '/../vendor/autoload.php');
 
 use PHPUnit\Framework\TestCase;
+use TorneLIB\Exception\ExceptionHandler;
 use TorneLIB\Utils\Memory;
+use TorneLIB\Utils\Generic;
+use TorneLIB\Utils\Security;
 
 class utilsTest extends TestCase
 {
@@ -42,7 +45,7 @@ class utilsTest extends TestCase
     {
         static::assertTrue(
             version_compare(
-                (new \TorneLIB\Utils\Generic())->getVersionByClassDoc(),
+                (new Generic())->getVersionByClassDoc(),
                 '6.1.0',
                 '>='
             )
@@ -56,7 +59,7 @@ class utilsTest extends TestCase
     public function getDocBlockThrows()
     {
         static::assertTrue(
-            (new TorneLIB\Utils\Generic())->getDocBlockItem(
+            (new Generic())->getDocBlockItem(
                 'throws',
                 'getDocBlockItem'
             ) === 'ReflectionException'
@@ -69,7 +72,7 @@ class utilsTest extends TestCase
      */
     public function getDocBlockSince()
     {
-        $sinceString = (new TorneLIB\Utils\Generic())->getDocBlockItem(
+        $sinceString = (new Generic())->getDocBlockItem(
             '@since',
             'getDocBlockItem'
         );
@@ -77,5 +80,14 @@ class utilsTest extends TestCase
         static::assertTrue(
             version_compare($sinceString, '6.1.0', '>=') ? true : false
         );
+    }
+
+    /**
+     * @test
+     * @throws ExceptionHandler
+     */
+    public function methodStates() {
+        static::expectException(ExceptionHandler::class);
+        (new Security())->getFunctionState('nisse');
     }
 }
