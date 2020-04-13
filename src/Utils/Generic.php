@@ -99,4 +99,34 @@ class Generic
     {
         return $this->getDocBlockItem('@version');
     }
+
+    /**
+     * Check if class files exists somewhere in platform (pear/pecl-based functions).
+     * Initially used to fetch XML-serializers. Returns first successful match.
+     *
+     * @param $classFile
+     * @return string
+     * @since 6.1.0
+     */
+    public function getStreamPath($classFile)
+    {
+        $return = null;
+
+        $checkClassFiles = [
+            $classFile,
+            sprintf('%s.php', $classFile),
+        ];
+
+        $return = false;
+
+        foreach ($checkClassFiles as $classFileName) {
+            $serializerPath = stream_resolve_include_path($classFileName);
+            if (!empty($serializerPath)) {
+                $return = $serializerPath;
+                break;
+            }
+        }
+
+        return $return;
+    }
 }
