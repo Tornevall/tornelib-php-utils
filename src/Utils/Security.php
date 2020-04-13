@@ -2,6 +2,10 @@
 
 namespace TorneLIB\Utils;
 
+use TorneLIB\Config\Flag;
+use TorneLIB\Exception\Constants;
+use TorneLIB\Exception\ExceptionHandler;
+
 /**
  * Class Security
  * @package TorneLIB\Utils
@@ -40,9 +44,9 @@ class Security
         $return = false;
 
         if (is_array($key)) {
-            foreach ($key as $fKey) {
+            foreach ($key as $functionName) {
                 $functionList = array_map("strtolower", $this->getIniArray('disable_functions'));
-                if (in_array($fKey, $functionList)) {
+                if (in_array($functionName, $functionList)) {
                     $return = true;
                     break;
                 }
@@ -54,8 +58,158 @@ class Security
             }
         }
 
+        return $return;
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     * @since 6.1.0
+     */
+    public function getDisabledClass($key)
+    {
+        $return = false;
+
+        if (is_array($key)) {
+            foreach ($key as $className) {
+                $classList = array_map("strtolower", $this->getIniArray('disable_classes'));
+                if (in_array(strtolower($className), $classList)) {
+                    $return = true;
+                    break;
+                }
+            }
+        } else {
+            $classList = array_map("strtolower", $this->getIniArray('disable_classes'));
+            if (in_array(strtolower($key), $classList)) {
+                $return = true;
+            }
+        }
+
+        if (Flag::isFlag(
+            sprintf(
+                'testmode_disabled_%s',
+                $key
+            )
+        )) {
+            $return = true;
+        };
 
         return $return;
+    }
+
+    /**
+     * @param $className
+     * @param bool $throw
+     * @return int
+     * @throws ExceptionHandler
+     */
+    public function getClassState($className, $throw = true)
+    {
+        $return = false;
+        $code = Constants::LIB_NO_ERROR;
+
+        if (!class_exists($className)) {
+            $code = Constants::LIB_CLASS_UNAVAILABLE;
+        }
+        if ($this->getDisabledClass($className)) {
+            $code = Constants::LIB_CLASS_DISABLED;
+        }
+
+        $errorMessage = "";
+        switch ($code) {
+            case Constants::LIB_CLASS_UNAVAILABLE:
+                $errorMessage = sprintf(
+                    'Class %s is %s: Not available on this platform.',
+                    $className,
+                    'missing'
+                );
+                break;
+            case Constants::LIB_CLASS_DISABLED:
+                $errorMessage = sprintf(
+                    'Class %s is %s: It has been disabled on this platform.',
+                    $className,
+                    'disabled'
+                );
+            default:
+                $return = true;
+                break;
+        }
+
+        if (!empty($errorMessage) && $throw) {
+            throw new ExceptionHandler(
+                sprintf(
+                    'ClassTestException: %s',
+                    $errorMessage
+                ),
+                $code
+            );
+        }
+
+        return $return;
+    }
+
+    /**
+     * @param $functionName
+     * @param bool $throw
+     * @return bool
+     * @throws ExceptionHandler
+     */
+    public function getFunctionState($functionName, $throw = true) {
+        $return = true;
+
+        if (!function_exists($functionName)) {
+            $code = Constants::LIB_METHOD_OR_LIBRARY_UNAVAILABLE;
+        }
+
+        if ($throw && !is_null($code)) {
+            throw new ExceptionHandler(
+                sprintf(
+                    'Function or method "%s" is not available on this platform. Is it properly installed?',
+                    $functionName
+                )
+            );
+        }
+
+        return $return;
+    }
+
+    /**
+     * @param $className
+     * @param bool $throwable
+     * @return int
+     * @throws ExceptionHandler
+     */
+    public static function getCurrentClassState($className, $throwable = true)
+    {
+        return (new Security())->getClassState($className, $throwable);
+    }
+
+    /**
+     * @param $functionName
+     * @param bool $throwable
+     * @return bool
+     * @throws ExceptionHandler
+     */
+    public static function getCurrentFunctionState($functionName, $throwable = true) {
+        return (new Security())->getFunctionState($functionName, $throwable);
+    }
+
+    /**
+     * @param $className
+     * @return bool
+     */
+    public static function getIsDisabledClass($className)
+    {
+        return (new Security())->getDisabledClass($className);
+    }
+
+    /**
+     * @param $functionName
+     * @return bool
+     */
+    public static function getIsDisabledFunction($functionName)
+    {
+        return (new Security())->getDisabledFunction($functionName);
     }
 
     /**
