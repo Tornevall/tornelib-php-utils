@@ -13,7 +13,6 @@ use TorneLIB\Exception\ExceptionHandler;
  */
 class Security
 {
-
     /**
      * Security constructor.
      * @since 6.1.0
@@ -154,14 +153,16 @@ class Security
      * @return bool
      * @throws ExceptionHandler
      */
-    public function getFunctionState($functionName, $throw = true) {
+    public function getFunctionState($functionName, $throw = true)
+    {
         $return = true;
+        $code = Constants::LIB_NO_ERROR;
 
         if (!function_exists($functionName)) {
             $code = Constants::LIB_METHOD_OR_LIBRARY_UNAVAILABLE;
         }
 
-        if ($throw && !is_null($code)) {
+        if ($throw && ($code !== Constants::LIB_NO_ERROR)) {
             throw new ExceptionHandler(
                 sprintf(
                     'Function or method "%s" is not available on this platform. Is it properly installed?',
@@ -171,6 +172,18 @@ class Security
         }
 
         return $return;
+    }
+
+    /**
+     * Collective method, inherited from Generic.
+     *
+     * @param $classFile
+     * @return bool
+     * since 6.1.0
+     */
+    public function getStreamPath($classFile)
+    {
+        return (new Generic())->getStreamPath($classFile);
     }
 
     /**
@@ -190,8 +203,19 @@ class Security
      * @return bool
      * @throws ExceptionHandler
      */
-    public static function getCurrentFunctionState($functionName, $throwable = true) {
+    public static function getCurrentFunctionState($functionName, $throwable = true)
+    {
         return (new Security())->getFunctionState($functionName, $throwable);
+    }
+
+    /**
+     * @param $classFile
+     * @return bool
+     * @since 6.1.0
+     */
+    public static function getCurrentStreamPath($classFile)
+    {
+        return (new Generic())->getStreamPath($classFile);
     }
 
     /**
