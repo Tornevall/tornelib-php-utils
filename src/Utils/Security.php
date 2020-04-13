@@ -99,10 +99,13 @@ class Security
 
     /**
      * @param $className
-     * @return string
+     * @param bool $throw
+     * @return int
+     * @throws ExceptionHandler
      */
     public function getClassState($className, $throw = true)
     {
+        $return = false;
         $code = Constants::LIB_NO_ERROR;
 
         if (!class_exists($className)) {
@@ -128,7 +131,7 @@ class Security
                     'disabled'
                 );
             default:
-                // Proceed.
+                $return = true;
                 break;
         }
 
@@ -142,16 +145,53 @@ class Security
             );
         }
 
-        return $code;
+        return $return;
+    }
+
+    /**
+     * @param $functionName
+     * @param bool $throw
+     * @return bool
+     * @throws ExceptionHandler
+     */
+    public function getFunctionState($functionName, $throw = true) {
+        $return = true;
+
+        if (!function_exists($className)) {
+            $code = Constants::LIB_METHOD_OR_LIBRARY_UNAVAILABLE;
+        }
+
+        if ($throw && !is_null($code)) {
+            throw new ExceptionHandler(
+                sprintf(
+                    'Function or method "%s" is not available on this platform. Is it properly installed?',
+                    $functionName
+                )
+            );
+        }
+
+        return $return;
     }
 
     /**
      * @param $className
-     * @return string
+     * @param bool $throwable
+     * @return int
+     * @throws ExceptionHandler
      */
     public static function getCurrentClassState($className, $throwable = true)
     {
         return (new Security())->getClassState($className, $throwable);
+    }
+
+    /**
+     * @param $functionName
+     * @param bool $throwable
+     * @return bool
+     * @throws ExceptionHandler
+     */
+    public static function getCurrentFunctionState($functionName, $throwable = true) {
+        return (new Security())->getFunctionState($functionName, $throwable);
     }
 
     /**
