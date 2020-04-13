@@ -157,7 +157,7 @@ class Security
     public function getFunctionState($functionName, $throw = true) {
         $return = true;
 
-        if (!function_exists($className)) {
+        if (!function_exists($functionName)) {
             $code = Constants::LIB_METHOD_OR_LIBRARY_UNAVAILABLE;
         }
 
