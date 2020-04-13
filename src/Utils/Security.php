@@ -46,14 +46,14 @@ class Security
         if (is_array($key)) {
             foreach ($key as $functionName) {
                 $functionList = array_map("strtolower", $this->getIniArray('disable_functions'));
-                if (in_array($functionName, $functionList)) {
+                if (in_array(strtolower($functionName), $functionList)) {
                     $return = true;
                     break;
                 }
             }
         } else {
             $functionList = array_map("strtolower", $this->getIniArray('disable_functions'));
-            if (in_array($key, $functionList)) {
+            if (in_array(strtolower($key), $functionList)) {
                 $return = true;
             }
         }
@@ -154,20 +154,34 @@ class Security
      * @return bool
      * @throws ExceptionHandler
      */
-    public function getFunctionState($functionName, $throw = true) {
-        $return = true;
+    public function getFunctionState($functionName, $throw = true)
+    {
+        $return = false;
         $code = Constants::LIB_NO_ERROR;
 
         if (!function_exists($functionName)) {
             $code = Constants::LIB_METHOD_OR_LIBRARY_UNAVAILABLE;
         }
+        if ($this->getDisabledFunction($functionName)) {
+            $code = Constants::LIB_METHOD_OR_LIBRARY_UNAVAILABLE;
+        }
 
-        if ($throw && !is_null($code)) {
-            throw new ExceptionHandler(
-                sprintf(
+        $errorMessage = "";
+        switch ($code) {
+            case Constants::LIB_METHOD_OR_LIBRARY_UNAVAILABLE:
+                $errorMessage = sprintf(
                     'Function or method "%s" is not available on this platform. Is it properly installed?',
                     $functionName
-                )
+                );
+                break;
+            default:
+                $return = true;
+        }
+
+        if ($throw && !is_null($code) && $code && !empty($errorMessage)) {
+            throw new ExceptionHandler(
+                $errorMessage,
+                $code
             );
         }
 
@@ -191,7 +205,8 @@ class Security
      * @return bool
      * @throws ExceptionHandler
      */
-    public static function getCurrentFunctionState($functionName, $throwable = true) {
+    public static function getCurrentFunctionState($functionName, $throwable = true)
+    {
         return (new Security())->getFunctionState($functionName, $throwable);
     }
 
