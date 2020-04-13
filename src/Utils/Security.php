@@ -2,6 +2,7 @@
 
 namespace TorneLIB\Utils;
 
+use TorneLIB\Config\Flag;
 use TorneLIB\Exception\Constants;
 use TorneLIB\Exception\ExceptionHandler;
 
@@ -83,6 +84,15 @@ class Security
                 $return = true;
             }
         }
+
+        if (Flag::isFlag(
+            sprintf(
+                'testmode_disabled_%s',
+                $key
+            )
+        )) {
+            $return = true;
+        };
 
         return $return;
     }
