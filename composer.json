@@ -3,15 +3,15 @@
     "description": "Utils that many of the TorneLIB-based libraries may need.",
     "license": "Apache-2.0",
     "require": {
-        "tornevall/tornelib-php-errorhandler": "^6.1",
-        "tornevall/tornelib-php-io": "^6.1",
-        "tornevall/tornelib-php-flags": "^6.1"
+        "tornevall/tornelib-php-errorhandler": "^6.1.0",
+        "tornevall/tornelib-php-io": "^6.1.0",
+        "tornevall/tornelib-php-flags": "^6.1.0"
     },
     "authors": [
         {
             "name": "Tomas Tornevall",
             "email": "thorne@tornevall.net",
-            "homepage": "https://tornevall.net",
+            "homepage": "https://developer.tornevall.net/",
             "role": "Developer"
         }
     ],
