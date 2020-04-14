@@ -5,7 +5,6 @@ namespace TorneLIB\Utils;
 use Exception;
 use TorneLIB\Exception\Constants;
 use TorneLIB\Exception\ExceptionHandler;
-use TorneLIB\IO\Data\Strings;
 
 /**
  * Class Memory
@@ -24,7 +23,6 @@ class Memory
      */
     public function __construct()
     {
-        $this->IO = new Strings();
         $this->INI = new Ini();
     }
 
@@ -41,10 +39,10 @@ class Memory
     {
         $return = false;
 
-        $oldMemoryValue = $this->IO->getBytes(ini_get('memory_limit'));
+        $oldMemoryValue = $this->getBytes(ini_get('memory_limit'));
         if ($this->INI->getIniSettable('memory_limit')) {
             $blindIniSet = ini_set('memory_limit', $newLimitValue) !== false ? true : false;
-            $newMemoryValue = $this->IO->getBytes(ini_get('memory_limit'));
+            $newMemoryValue = $this->getBytes(ini_get('memory_limit'));
             $return = $blindIniSet && $oldMemoryValue !== $newMemoryValue ? true : false;
         }
 
@@ -63,8 +61,8 @@ class Memory
     public function getMemoryLimitAdjusted($minLimit = '256M', $maxLimit = '-1')
     {
         $return = false;
-        $currentLimit = $this->IO->getBytes(ini_get('memory_limit'));
-        $myLimit = $this->IO->getBytes($minLimit);
+        $currentLimit = $this->getBytes(ini_get('memory_limit'));
+        $myLimit = $this->getBytes($minLimit);
         if ($currentLimit <= $myLimit) {
             $return = $this->setMemoryLimit($maxLimit);
 
@@ -77,6 +75,34 @@ class Memory
         }
 
         return $return;
+    }
+
+    /**
+     * WP Style byte conversion for memory limits. To avoid circular dependencies of IO, we've put a local copy
+     * here, so we don't need to require the IO library.
+     *
+     * @param $value
+     * @return mixed
+     */
+    public function getBytes($value)
+    {
+        $value = strtolower(trim($value));
+        $bytes = (int)$value;
+
+        if (false !== strpos($value, 't')) {
+            $bytes *= 1024 * 1024 * 1024 * 1024;
+        } elseif (false !== strpos($value, 'g')) {
+            $bytes *= 1024 * 1024 * 1024;
+        } elseif (false !== strpos($value, 'm')) {
+            $bytes *= 1024 * 1024;
+        } elseif (false !== strpos($value, 'k')) {
+            $bytes *= 1024;
+        } elseif (false !== strpos($value, 'b')) {
+            $bytes *= 1;
+        }
+
+        // Deal with large (float) values which run into the maximum integer size.
+        return min($bytes, PHP_INT_MAX);
     }
 
     /**
