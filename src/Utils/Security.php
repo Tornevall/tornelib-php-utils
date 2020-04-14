@@ -129,6 +129,7 @@ class Security
                     $className,
                     'disabled'
                 );
+                break;
             default:
                 $return = true;
                 break;
