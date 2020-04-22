@@ -149,6 +149,8 @@ class Security
     }
 
     /**
+     * Checks if native method/function is available.
+     *
      * @param $functionName
      * @param bool $throw
      * @return bool
@@ -163,7 +165,7 @@ class Security
             $code = Constants::LIB_METHOD_OR_LIBRARY_UNAVAILABLE;
         }
         if ($this->getDisabledFunction($functionName)) {
-            $code = Constants::LIB_METHOD_OR_LIBRARY_UNAVAILABLE;
+            $code = Constants::LIB_METHOD_OR_LIBRARY_DISABLED;
         }
 
         $errorMessage = "";
@@ -171,6 +173,12 @@ class Security
             case Constants::LIB_METHOD_OR_LIBRARY_UNAVAILABLE:
                 $errorMessage = sprintf(
                     'Function or method "%s" is not available on this platform. Is it properly installed?',
+                    $functionName
+                );
+                break;
+            case Constants::LIB_METHOD_OR_LIBRARY_DISABLED:
+                $errorMessage = sprintf(
+                    'Function or method "%s" is not available, since it has been disabled (php.ini/disable_functions).',
                     $functionName
                 );
                 break;
