@@ -9,7 +9,7 @@ use TorneLIB\Exception\ExceptionHandler;
 /**
  * Class Security
  * @package TorneLIB\Utils
- * @version 6.1.0
+ * @version 6.1.2
  */
 class Security
 {
@@ -331,5 +331,23 @@ class Security
     public static function getIsSafe()
     {
         return self::getIsSafe();
+    }
+
+    /**
+     * @param $iniKey
+     * @return string
+     * @since 6.1.2
+     */
+    public static function getIniRuntime($iniKey) {
+        return (new Security())->getIni($iniKey);
+    }
+
+    /**
+     * @param $iniKey
+     * @return bool
+     * @since 6.1.2
+     */
+    public static function getIniSet($iniKey) {
+        return (new Security())->getIniBoolean($iniKey);
     }
 }

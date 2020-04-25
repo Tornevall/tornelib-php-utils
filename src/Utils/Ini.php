@@ -2,6 +2,11 @@
 
 namespace TorneLIB\Utils;
 
+/**
+ * Class Ini
+ * @package TorneLIB\Utils
+ * @version 6.1.2
+ */
 class Ini
 {
     /**
