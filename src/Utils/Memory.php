@@ -9,12 +9,10 @@ use TorneLIB\Exception\ExceptionHandler;
 /**
  * Class Memory
  * @package TorneLIB\Utils
- * @version 6.1.0
- * @since 6.1.2
+ * @version 6.1.2
  */
 class Memory
 {
-    private $IO;
     private $INI;
 
     /**
