@@ -9,7 +9,7 @@ use ReflectionException;
  * Class Generic Generic functions
  * @package TorneLIB\Utils
  * @version 6.1.0
- * @since 6.1.0
+ * @since 6.1.2
  */
 class Generic
 {
@@ -32,9 +32,17 @@ class Generic
      */
     private function getExtractedDocBlock(
         $item,
-        $functionName
+        $functionName,
+        $className = ''
     ) {
-        $doc = new ReflectionClass(__CLASS__);
+        if (empty($className)) {
+            $className = __CLASS__;
+        }
+        if (!class_exists($className)) {
+            return '';
+        }
+
+        $doc = new ReflectionClass($className);
 
         if (empty($functionName)) {
             $return = $doc->getDocComment();
@@ -79,13 +87,14 @@ class Generic
      * @throws ReflectionException
      * @since 6.1.0
      */
-    public function getDocBlockItem($item, $functionName = '')
+    public function getDocBlockItem($item, $functionName = '', $className)
     {
         return (string)$this->getExtractedDocBlockItem(
             $item,
             $this->getExtractedDocBlock(
                 $item,
-                $functionName
+                $functionName,
+                $className
             )
         );
     }
@@ -95,9 +104,9 @@ class Generic
      * @throws ReflectionException
      * @since 6.1.0
      */
-    public function getVersionByClassDoc()
+    public function getVersionByClassDoc($className = '')
     {
-        return $this->getDocBlockItem('@version');
+        return $this->getDocBlockItem('@version', '', $className);
     }
 
     /**
