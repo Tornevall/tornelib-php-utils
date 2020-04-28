@@ -2,10 +2,15 @@
 
 namespace TorneLIB\Utils;
 
+/**
+ * Class Ini
+ * @package TorneLIB\Utils
+ * @version 6.1.2
+ */
 class Ini
 {
     /**
-     * Check if the setting is settable with ini_set(). Partially borrowed from WordPress.
+     * Check if the setting is settable with ini_set().
      *
      * @param $setting
      * @return bool

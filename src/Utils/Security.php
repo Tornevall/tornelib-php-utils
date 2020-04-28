@@ -9,7 +9,7 @@ use TorneLIB\Exception\ExceptionHandler;
 /**
  * Class Security
  * @package TorneLIB\Utils
- * @version 6.1.0
+ * @version 6.1.2
  */
 class Security
 {
@@ -155,6 +155,7 @@ class Security
      * @param bool $throw
      * @return bool
      * @throws ExceptionHandler
+     * @since 6.1.0
      */
     public function getFunctionState($functionName, $throw = true)
     {
@@ -213,6 +214,7 @@ class Security
      * @param bool $throwable
      * @return int
      * @throws ExceptionHandler
+     * @since 6.1.0
      */
     public static function getCurrentClassState($className, $throwable = true)
     {
@@ -224,6 +226,7 @@ class Security
      * @param bool $throwable
      * @return bool
      * @throws ExceptionHandler
+     * @since 6.1.0
      */
     public static function getCurrentFunctionState($functionName, $throwable = true)
     {
@@ -243,6 +246,7 @@ class Security
     /**
      * @param $className
      * @return bool
+     * @since 6.1.0
      */
     public static function getIsDisabledClass($className)
     {
@@ -252,6 +256,7 @@ class Security
     /**
      * @param $functionName
      * @return bool
+     * @since 6.1.0
      */
     public static function getIsDisabledFunction($functionName)
     {
@@ -331,5 +336,23 @@ class Security
     public static function getIsSafe()
     {
         return self::getIsSafe();
+    }
+
+    /**
+     * @param $iniKey
+     * @return string
+     * @since 6.1.2
+     */
+    public static function getIniRuntime($iniKey) {
+        return (new Security())->getIni($iniKey);
+    }
+
+    /**
+     * @param $iniKey
+     * @return bool
+     * @since 6.1.2
+     */
+    public static function getIniSet($iniKey) {
+        return (new Security())->getIniBoolean($iniKey);
     }
 }
