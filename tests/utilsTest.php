@@ -98,6 +98,7 @@ class utilsTest extends TestCase
 
     /**
      * @test
+     * @throws ExceptionHandler
      */
     public function getVersionByComposer()
     {

@@ -10,11 +10,10 @@ use TorneLIB\Exception\ExceptionHandler;
 /**
  * Class Generic Generic functions
  * @package TorneLIB\Utils
- * @version 6.1.4
+ * @version 6.1.5
  */
 class Generic
 {
-
     /**
      * Generic constructor.
      * @since 6.1.0
@@ -27,9 +26,11 @@ class Generic
     /**
      * @param $item
      * @param $functionName
+     * @param string $className
      * @return string
      * @throws ReflectionException
      * @since 6.1.0
+     * @noinspection PhpUnusedParameterInspection Called from externals.
      */
     private function getExtractedDocBlock(
         $item,
@@ -84,11 +85,12 @@ class Generic
     /**
      * @param $item
      * @param string $functionName
+     * @param string $className
      * @return string
      * @throws ReflectionException
      * @since 6.1.0
      */
-    public function getDocBlockItem($item, $functionName = '', $className)
+    public function getDocBlockItem($item, $functionName = '', $className = '')
     {
         return (string)$this->getExtractedDocBlockItem(
             $item,
@@ -101,6 +103,7 @@ class Generic
     }
 
     /**
+     * @param string $className
      * @return string
      * @throws ReflectionException
      * @since 6.1.0
@@ -173,14 +176,14 @@ class Generic
     {
         $return = '';
 
-        $composerdata = json_decode(
+        $composerData = json_decode(
             file_get_contents(
                 sprintf('%s/composer.json', $location)
             )
         );
 
-        if (isset($composerdata->$tag)) {
-            $return = $composerdata->$tag;
+        if (isset($composerData->$tag)) {
+            $return = $composerData->$tag;
         }
 
         return (string)$return;
