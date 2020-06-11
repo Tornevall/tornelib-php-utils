@@ -4,10 +4,14 @@ require_once(__DIR__ . '/../vendor/autoload.php');
 
 use PHPUnit\Framework\TestCase;
 use TorneLIB\Exception\ExceptionHandler;
-use TorneLIB\Utils\Memory;
 use TorneLIB\Utils\Generic;
+use TorneLIB\Utils\Memory;
 use TorneLIB\Utils\Security;
 
+/**
+ * Class utilsTest
+ * @version 1.0.0
+ */
 class utilsTest extends TestCase
 {
     /**
@@ -86,8 +90,20 @@ class utilsTest extends TestCase
      * @test
      * @throws ExceptionHandler
      */
-    public function methodStates() {
+    public function methodStates()
+    {
         static::expectException(ExceptionHandler::class);
         (new Security())->getFunctionState('nisse');
+    }
+
+    /**
+     * @test
+     */
+    public function getVersionByComposer()
+    {
+        static::assertStringStartsWith(
+            '6.1',
+            (new Generic())->getVersionByComposer(__FILE__)
+        );
     }
 }
