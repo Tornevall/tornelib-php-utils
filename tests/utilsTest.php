@@ -107,4 +107,33 @@ class utilsTest extends TestCase
             (new Generic())->getVersionByComposer(__FILE__)
         );
     }
+
+    /**
+     * @test
+     */
+    public function getTemplate()
+    {
+        $code = 0;
+        $generic = new Generic();
+        $generic->setTemplatePath(__DIR__ . '/templates');
+        $html = $generic->getTemplate('test.html', ['$username' => 'Sven', 'regularVariable' => 'Yep, it is regular.']);
+
+        try {
+            $uglyRequest = new Generic();
+            $uglyRequest->getTemplate(
+                '/etc/passwd',
+                [
+                    '$username' => 'Sven',
+                    'regularVariable' => 'Yep, it is regular.',
+                ]
+            );
+        } catch (Exception $e) {
+            $code = $e->getCode();
+        }
+
+        static::assertTrue(
+            $code === 404 &&
+            (bool)preg_match('/it is regular/', $html)
+        );
+    }
 }
