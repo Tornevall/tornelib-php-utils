@@ -35,15 +35,6 @@ class Generic
     private $templateExtension = ['htm', 'html', 'txt', 'php', 'phtml'];
 
     /**
-     * Generic constructor.
-     * @since 6.1.0
-     */
-    public function __construct()
-    {
-        return $this;
-    }
-
-    /**
      * @param string $className
      * @return string
      * @throws ReflectionException
