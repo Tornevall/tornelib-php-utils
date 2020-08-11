@@ -231,8 +231,35 @@ class Generic
     }
 
     /**
+     * Using both class and composer.json to discover version (in case that composer.json are removed in a "final").
+     *
+     * @param string $composerLocation
+     * @param int $composerDepth
+     * @param string $className
+     * @return string|null
+     * @throws ExceptionHandler
+     * @throws ReflectionException
+     * @since 6.1.7
+     */
+    public function getVersionByAny($composerLocation = '', $composerDepth = 3, $className = '')
+    {
+        $return = null;
+
+        $byComposer = $this->getVersionByComposer($composerLocation, $composerDepth);
+        $byClass = $this->getVersionByClassDoc($className);
+
+        // Composer always have higher priority.
+        if (!empty($byComposer)) {
+            $return = $byComposer;
+        } elseif (!empty($byClass)) {
+            $return = $byClass;
+        }
+
+        return $return;
+    }
+
+    /**
      * @param $templateName
-     * @param bool $isHtml
      * @param array $assignedVariables
      * @return false|string
      * @throws Exception
