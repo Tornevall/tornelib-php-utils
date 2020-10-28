@@ -136,4 +136,20 @@ class utilsTest extends TestCase
             (bool)preg_match('/it is regular/', $html)
         );
     }
+
+    /**
+     * @test
+     * @throws ReflectionException
+     * @since 6.1.9
+     */
+    public function getClassShort()
+    {
+        $withReflection = (new Generic())->getShortClassName(Generic::class);
+        $withoutReflection = (new Generic())->getShortClassName(Generic::class, true);
+
+        static::assertTrue(
+            $withoutReflection === 'Generic' &&
+            $withReflection === 'Generic'
+        );
+    }
 }
