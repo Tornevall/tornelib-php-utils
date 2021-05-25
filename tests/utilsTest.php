@@ -29,6 +29,19 @@ class utilsTest extends TestCase
 
     /**
      * @test
+     * Adjust memory statically.
+     */
+    public function testMemoryStatic()
+    {
+        $current = ini_get('memory_limit');
+        Memory::setMemory('4096M');
+        $newCurrent = ini_get('memory_limit');
+
+        static::assertTrue($current !== $newCurrent && $newCurrent === '4096M');
+    }
+
+    /**
+     * @test
      * Adjust memory on fly.
      * @throws Exception
      */
@@ -38,6 +51,20 @@ class utilsTest extends TestCase
         $mem->setMemoryLimit('2048M');
         static::assertTrue(
             (new Memory())->getMemoryLimitAdjusted('4096M')
+        );
+    }
+
+    /**
+     * @test
+     * Adjust memory on fly.
+     * @throws Exception
+     */
+    public function getMemoryStaticAdjusted()
+    {
+        $mem = new Memory();
+        $mem->setMemoryLimit('4096M');
+        static::assertTrue(
+            Memory::getMemoryAdjusted('8192M')
         );
     }
 
