@@ -14,6 +14,11 @@ class WordPress
 {
     private $wpPrefix;
 
+    public function __construct()
+    {
+        $this->validate();
+    }
+
     /**
      * @throws ExceptionHandler
      */
