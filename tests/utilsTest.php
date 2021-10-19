@@ -179,4 +179,26 @@ class utilsTest extends TestCase
             $withReflection === 'Generic'
         );
     }
+
+    /**
+     * @test
+     * @since 6.1.12
+     */
+    public function getComposerVersion()
+    {
+        $composerVersion = (new Generic())->getVersionByComposer(__FILE__);
+
+        static::assertTrue(version_compare($composerVersion, '6.1.12', '>='));
+    }
+
+    /**
+     * @test
+     * @since 6.1.12
+     */
+    public function getComposerName()
+    {
+        $composerName = (new Generic())->getComposerTag(__FILE__, 'name');
+
+        static::assertTrue($composerName === 'tornevall/tornelib-php-utils');
+    }
 }
