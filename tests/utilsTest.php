@@ -166,7 +166,6 @@ class utilsTest extends TestCase
 
     /**
      * @test
-     * @throws ReflectionException
      * @since 6.1.9
      */
     public function getClassShort()
@@ -200,5 +199,26 @@ class utilsTest extends TestCase
         $composerName = (new Generic())->getComposerTag(__FILE__, 'name');
 
         static::assertTrue($composerName === 'tornevall/tornelib-php-utils');
+    }
+
+    /**
+     * @test
+     * @throws ExceptionHandler
+     */
+    public function getComposerNameShort()
+    {
+        $composerName = (new Generic())->getComposerShortName(__FILE__);
+
+        static::assertTrue($composerName === 'tornelib-php-utils');
+    }
+
+    /**
+     * @test
+     */
+    public function getComposerVendor()
+    {
+        $composerName = (new Generic())->getComposerVendor(__FILE__);
+
+        static::assertTrue($composerName === 'tornevall');
     }
 }

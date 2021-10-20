@@ -11,7 +11,7 @@ use TorneLIB\Exception\ExceptionHandler;
 /**
  * Class Generic Generic functions
  * @package TorneLIB\Utils
- * @version 6.1.12
+ * @version 6.1.13
  */
 class Generic
 {
@@ -47,6 +47,12 @@ class Generic
     private $templateExtension = ['htm', 'html', 'txt', 'php', 'phtml'];
 
     /**
+     * @var array Name entry from composer.
+     * @since 6.1.13
+     */
+    private $composerNameEntry;
+
+    /**
      * Check if class files exists somewhere in platform (pear/pecl-based functions).
      * Initially used to fetch XML-serializers. Returns first successful match.
      *
@@ -77,28 +83,40 @@ class Generic
     }
 
     /**
-     * Using both class and composer.json to discover version (in case that composer.json are removed in a "final").
-     *
-     * @param string $composerLocation
-     * @param int $composerDepth
-     * @param string $className
-     * @return string|null
+     * @param $composerLocation
+     * @return mixed|string
      * @throws ExceptionHandler
-     * @throws ReflectionException
-     * @since 6.1.7
+     * @since 6.1.13
      */
-    public function getVersionByAny($composerLocation = '', $composerDepth = 3, $className = '')
+    public function getComposerShortName($composerLocation)
     {
-        $return = null;
+        return $this->getNameEntry('name', $composerLocation);
+    }
 
-        $byComposer = $this->getVersionByComposer($composerLocation, $composerDepth);
-        $byClass = $this->getVersionByClassDoc($className);
+    /**
+     * @param $part
+     * @param $composerLocation
+     * @return mixed|string
+     * @throws ExceptionHandler
+     * @since 6.1.13
+     */
+    private function getNameEntry($part, $composerLocation)
+    {
+        $return = '';
+        $this->composerNameEntry = explode('/', $this->getComposerTag($composerLocation, 'name'), 2);
 
-        // Composer always have higher priority.
-        if (!empty($byComposer)) {
-            $return = $byComposer;
-        } elseif (!empty($byClass)) {
-            $return = $byClass;
+        switch ($part) {
+            case 'name':
+                if (isset($this->composerNameEntry[1])) {
+                    $return = $this->composerNameEntry[1];
+                }
+                break;
+            case 'vendor':
+                if (isset($this->composerNameEntry[0])) {
+                    $return = $this->composerNameEntry[0];
+                }
+                break;
+            default:
         }
 
         return $return;
@@ -106,20 +124,24 @@ class Generic
 
     /**
      * @param $location
-     * @param int $maxDepth Default is 3.
+     * @param $tag
      * @return string
      * @throws ExceptionHandler
      * @since 6.1.3
      */
-    public function getVersionByComposer($location, $maxDepth = 3)
+    public function getComposerTag($location, $tag)
     {
         $return = '';
 
-        if (!empty(($this->getComposerConfig($location, $maxDepth)))) {
-            $return = $this->getComposerTag($this->composerLocation, 'version');
+        if (empty($this->composerData)) {
+            $this->getComposerConfig($location);
         }
 
-        return $return;
+        if (isset($this->composerData->{$tag})) {
+            $return = $this->composerData->{$tag};
+        }
+
+        return (string)$return;
     }
 
     /**
@@ -188,25 +210,59 @@ class Generic
     }
 
     /**
+     * @param $composerLocation
+     * @return mixed|string
+     * @since 6.1.13
+     */
+    public function getComposerVendor($composerLocation)
+    {
+        return $this->getNameEntry('vendor', $composerLocation);
+    }
+
+    /**
+     * Using both class and composer.json to discover version (in case that composer.json are removed in a "final").
+     *
+     * @param string $composerLocation
+     * @param int $composerDepth
+     * @param string $className
+     * @return string|null
+     * @throws ExceptionHandler
+     * @throws ReflectionException
+     * @since 6.1.7
+     */
+    public function getVersionByAny($composerLocation = '', $composerDepth = 3, $className = '')
+    {
+        $return = null;
+
+        $byComposer = $this->getVersionByComposer($composerLocation, $composerDepth);
+        $byClass = $this->getVersionByClassDoc($className);
+
+        // Composer always have higher priority.
+        if (!empty($byComposer)) {
+            $return = $byComposer;
+        } elseif (!empty($byClass)) {
+            $return = $byClass;
+        }
+
+        return $return;
+    }
+
+    /**
      * @param $location
-     * @param $tag
+     * @param int $maxDepth Default is 3.
      * @return string
      * @throws ExceptionHandler
      * @since 6.1.3
      */
-    public function getComposerTag($location, $tag)
+    public function getVersionByComposer($location, $maxDepth = 3)
     {
         $return = '';
 
-        if (empty($this->composerData)) {
-            $this->getComposerConfig($location);
+        if (!empty(($this->getComposerConfig($location, $maxDepth)))) {
+            $return = $this->getComposerTag($this->composerLocation, 'version');
         }
 
-        if (isset($this->composerData->{$tag})) {
-            $return = $this->composerData->{$tag};
-        }
-
-        return (string)$return;
+        return $return;
     }
 
     /**
