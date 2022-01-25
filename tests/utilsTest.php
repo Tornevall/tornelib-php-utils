@@ -221,4 +221,20 @@ class utilsTest extends TestCase
 
         static::assertTrue($composerName === 'tornevall');
     }
+
+    /**
+     * @test
+     */
+    public function getComposerInSecureMode()
+    {
+        if (!(new Security())->getSecureMode()) {
+            static::markTestSkipped('PHP instance is not in secure mode (open_basedir), so this test will not run.');
+            return;
+        }
+
+        $generic = new Generic();
+
+        $composerFile = '/usr/local/apache2/htdocs/ecommerceweb.se/woocommerce.ecommerceweb.se/wp-content/plugins/tornevall-networks-resurs-bank-payment-gateway-for-woocommerce';
+        static::assertTrue($generic->getVersionByComposer($composerFile) === 'N/A (open_basedir security active)');
+    }
 }
