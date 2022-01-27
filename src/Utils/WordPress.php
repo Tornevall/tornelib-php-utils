@@ -149,7 +149,7 @@ class WordPress
 
         if (function_exists('get_current_user_id') && function_exists('get_user_meta')) {
             $currentUserId = get_current_user_id();
-            if ($key === 'userid') {
+            if ($key === 'userid' || empty($key)) {
                 $return = $currentUserId;
             } else {
                 $metaData = empty($key) ? get_user_meta($currentUserId) : get_user_meta($currentUserId, $key);
