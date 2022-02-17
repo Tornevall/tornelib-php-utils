@@ -265,7 +265,7 @@ class Generic
      * @return bool
      * @since 6.1.15
      */
-    public function isOpenBaseDirException()
+    private function isOpenBaseDirException()
     {
         // If triggered once, skip checks.
         if ($this->openBaseDirExceptionTriggered) {
