@@ -11,7 +11,7 @@ use TorneLIB\Exception\ExceptionHandler;
 /**
  * Class Generic Generic functions
  * @package TorneLIB\Utils
- * @version 6.1.15
+ * @version 6.1.17
  */
 class Generic
 {
