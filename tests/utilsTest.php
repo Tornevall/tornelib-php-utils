@@ -7,6 +7,7 @@ use TorneLIB\Exception\ExceptionHandler;
 use TorneLIB\Utils\Generic;
 use TorneLIB\Utils\Memory;
 use TorneLIB\Utils\Security;
+use TorneLIB\Utils\WordPress;
 
 /**
  * Class utilsTest
@@ -14,6 +15,8 @@ use TorneLIB\Utils\Security;
  */
 class utilsTest extends TestCase
 {
+    private $wpPath = '/usr/local/apache2/htdocs/ecommerceweb.se/woocommerce.ecommerceweb.se/wp-content/plugins/tornevalls-resurs-bank-payment-gateway-for-woocommerce';
+
     /**
      * @test
      * Adjust memory on fly.
@@ -234,7 +237,16 @@ class utilsTest extends TestCase
 
         $generic = new Generic();
 
-        $composerFile = '/usr/local/apache2/htdocs/ecommerceweb.se/woocommerce.ecommerceweb.se/wp-content/plugins/tornevall-networks-resurs-bank-payment-gateway-for-woocommerce';
-        static::assertTrue($generic->getVersionByComposer($composerFile) === 'N/A (open_basedir security active)');
+        static::assertTrue($generic->getVersionByComposer($this->wpPath) === 'N/A (open_basedir security active)');
+    }
+
+    /**
+     * @test
+     */
+    public function wpUtilTags() {
+        $wp = new WordPress();
+        $wp->setPluginBaseFile(
+            sprintf('%s/init.php', $this->wpPath)
+        );
     }
 }

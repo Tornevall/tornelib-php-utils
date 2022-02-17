@@ -1,4 +1,8 @@
 <?php
+/**
+ * Copyright © Tomas Tornevall / Tornevall Networks. All rights reserved.
+ * See LICENSE.md for license details.
+ */
 
 namespace TorneLIB\Utils;
 
@@ -261,7 +265,7 @@ class Generic
      * @return bool
      * @since 6.1.15
      */
-    private function isOpenBaseDirException()
+    public function isOpenBaseDirException()
     {
         // If triggered once, skip checks.
         if ($this->openBaseDirExceptionTriggered) {
