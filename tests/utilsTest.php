@@ -239,14 +239,4 @@ class utilsTest extends TestCase
 
         static::assertTrue($generic->getVersionByComposer($this->wpPath) === 'N/A (open_basedir security active)');
     }
-
-    /**
-     * @test
-     */
-    public function wpUtilTags() {
-        $wp = new WordPress();
-        $wp->setPluginBaseFile(
-            sprintf('%s/init.php', $this->wpPath)
-        );
-    }
 }
