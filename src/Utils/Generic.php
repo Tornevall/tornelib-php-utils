@@ -86,7 +86,7 @@ class Generic
 
     /**
      * @var array
-     * @since 6.1.17
+     * @since 6.1.18
      */
     private $expectReleases = [];
 
@@ -125,6 +125,7 @@ class Generic
      *
      * @param $versionArray
      * @return $this
+     * @since 6.1.18
      */
     public function setExpectedVersions($versionArray)
     {
