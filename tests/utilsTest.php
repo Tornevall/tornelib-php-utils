@@ -3,11 +3,11 @@
 require_once(__DIR__ . '/../vendor/autoload.php');
 
 use PHPUnit\Framework\TestCase;
+use TorneLIB\Exception\Constants;
 use TorneLIB\Exception\ExceptionHandler;
 use TorneLIB\Utils\Generic;
 use TorneLIB\Utils\Memory;
 use TorneLIB\Utils\Security;
-use TorneLIB\Utils\WordPress;
 
 /**
  * Class utilsTest
@@ -238,5 +238,56 @@ class utilsTest extends TestCase
         $generic = new Generic();
 
         static::assertTrue($generic->getVersionByComposer($this->wpPath) === 'N/A (open_basedir security active)');
+    }
+
+    /**
+     * @test
+     */
+    public function getExpects()
+    {
+        $gen = new Generic();
+        $gen->setExpectedVersions(
+            [
+                Generic::class => '6.1.18',
+            ]
+        );
+
+        $expectsTrue = $gen->getExpectedVersions();
+
+        $gen->setExpectedVersions(
+            [
+                Constants::class => '9999.99',
+            ]
+        );
+
+        $expectsFalse = $gen->getExpectedVersions();
+
+        $gen->setExpectedVersions(
+            [
+                Constants::class => '9999.99',
+            ]
+        );
+        $oneException = false;
+        try {
+            $gen->getExpectedVersions(false);
+        } catch (Exception $e) {
+            $oneException = true;
+        }
+
+        $ncTest = realpath(__DIR__ . '/../../tornelib-php-netcurl');
+        if ($ncTest) {
+            $gen->setExpectedVersions(
+                [
+                    $ncTest => '6.1.0',
+                    sprintf('%s/composer.json', $ncTest) => '6.1.0',
+                ]
+            );
+            $expectAlsoNetCurl = $gen->getExpectedVersions();
+
+            static::assertTrue($expectsTrue && !$expectsFalse && $expectAlsoNetCurl && $oneException);
+            return;
+        }
+
+        static::assertTrue($expectsTrue && !$expectsFalse && $oneException);
     }
 }
