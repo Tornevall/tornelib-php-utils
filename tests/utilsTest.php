@@ -227,6 +227,7 @@ class utilsTest extends TestCase
 
     /**
      * @test
+     * @since 6.1.17
      */
     public function getComposerInSecureMode()
     {
@@ -242,6 +243,7 @@ class utilsTest extends TestCase
 
     /**
      * @test
+     * @since 6.1.18
      */
     public function getExpects()
     {
