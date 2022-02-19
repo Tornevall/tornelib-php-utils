@@ -274,6 +274,16 @@ class utilsTest extends TestCase
             $oneException = true;
         }
 
+        $castWrongClass = false;
+        try {
+            $gen->setExpectedVersions(
+                ['No-Class-Found' => '9.99']
+            );
+            $gen->getExpectedVersions();
+        } catch (Exception $e) {
+            $castWrongClass = true;
+        }
+
         $ncTest = realpath(__DIR__ . '/../../tornelib-php-netcurl');
         if ($ncTest) {
             $gen->setExpectedVersions(
@@ -284,10 +294,21 @@ class utilsTest extends TestCase
             );
             $expectAlsoNetCurl = $gen->getExpectedVersions();
 
-            static::assertTrue($expectsTrue && !$expectsFalse && $expectAlsoNetCurl && $oneException);
+            static::assertTrue(
+                $expectsTrue &&
+                !$expectsFalse &&
+                $expectAlsoNetCurl &&
+                $oneException &&
+                $castWrongClass
+            );
             return;
         }
 
-        static::assertTrue($expectsTrue && !$expectsFalse && $oneException);
+        static::assertTrue(
+            $expectsTrue &&
+            !$expectsFalse &&
+            $oneException &&
+            $castWrongClass
+        );
     }
 }
