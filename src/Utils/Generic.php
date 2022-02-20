@@ -107,8 +107,6 @@ class Generic
             sprintf('%s.php', $classFile),
         ];
 
-        $return = false;
-
         foreach ($checkClassFiles as $classFileName) {
             $serializerPath = stream_resolve_include_path($classFileName);
             if (!empty($serializerPath)) {
@@ -155,7 +153,7 @@ class Generic
                     // Track down a composer file for the current class and try to figure
                     // out current version on anything available.
                     if (class_exists('\ReflectionClass')) {
-                        $classPath = (new \ReflectionClass($expectName))->getFileName();
+                        $classPath = (new ReflectionClass($expectName))->getFileName();
                         $docVersion = $this->getVersionByAny($classPath, 3, $expectName);
                     } else {
                         $docVersion = $this->getVersionByClassDoc($expectName);
@@ -169,7 +167,7 @@ class Generic
                 } else {
                     // Check if this is a proper path/file before proceeding.
                     if (!file_exists($expectName)) {
-                        throw new Exception(
+                        throw new ExceptionHandler(
                             sprintf(
                                 'Expected %s, but could not find class.',
                                 $expectName
@@ -188,7 +186,7 @@ class Generic
             }
 
             if (!$proceed && !$return) {
-                throw new Exception(
+                throw new ExceptionHandler(
                     sprintf(
                         'Version control expectation failed. Wrong versions discovered for %s.',
                         implode(', ', $wrongVersions)
@@ -426,6 +424,7 @@ class Generic
     /**
      * @param $composerLocation
      * @return mixed|string
+     * @throws ExceptionHandler
      * @since 6.1.13
      */
     public function getComposerVendor($composerLocation)
@@ -705,7 +704,7 @@ class Generic
             }
             if (!$skipReflection && class_exists('\ReflectionClass')) {
                 /** @noinspection PhpFullyQualifiedNameUsageInspection */
-                $useReflection = new \ReflectionClass($namespaceClassName);
+                $useReflection = new ReflectionClass($namespaceClassName);
                 $return = $useReflection->getShortName();
             } else {
                 $wrapperClassExplode = explode('\\', $namespaceClassName);
