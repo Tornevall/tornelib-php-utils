@@ -91,6 +91,12 @@ class Generic
     private $expectReleases = [];
 
     /**
+     * @var array
+     * @since 6.1.19
+     */
+    private $expectedReality = [];
+
+    /**
      * Check if class files exists somewhere in platform (pear/pecl-based functions).
      * Initially used to fetch XML-serializers. Returns first successful match.
      *
@@ -146,7 +152,7 @@ class Generic
     {
         $return = true;
         $wrongVersions = [];
-
+        $this->expectedReality = [];
         if (is_array($this->expectReleases) && count($this->expectReleases)) {
             foreach ($this->expectReleases as $expectName => $expectVersion) {
                 if (class_exists($expectName)) {
@@ -159,10 +165,13 @@ class Generic
                         $docVersion = $this->getVersionByClassDoc($expectName);
                     }
                     if (!empty($docVersion)) {
+                        $this->expectedReality[$expectName] = $docVersion;
                         if (version_compare($docVersion, $expectVersion, '<')) {
                             $return = false;
                             $wrongVersions[] = $expectName;
                         }
+                    } else {
+                        $this->expectedReality[$expectName] = 'N/A';
                     }
                 } else {
                     // Check if this is a proper path/file before proceeding.
@@ -178,6 +187,7 @@ class Generic
                     // Sanitize name.
                     $expectName = preg_replace('/\/$|\/composer.json/', '', $expectName) . '/composer.json';
                     $composerVersion = $this->getVersionByComposer($expectName);
+                    $this->expectedReality[$expectName] = $composerVersion;
                     if (version_compare($composerVersion, $expectVersion, '<')) {
                         $return = false;
                         $wrongVersions[] = $expectName;
@@ -202,12 +212,25 @@ class Generic
     }
 
     /**
+     * What we did expect, but received.
+     * @return array
+     * @throws ExceptionHandler
+     * @throws ReflectionException
+     * @since 6.1.19
+     */
+    public function getExpectationsReal()
+    {
+        // Run expectations first.
+        $this->getExpectedVersions();
+        return $this->expectedReality;
+    }
+
+    /**
      * @return array
      * @since 6.1.18
      */
     public function getExpectationList()
     {
-        // Make sure correct data is returned.
         return is_array($this->expectReleases) ? $this->expectReleases : [];
     }
 

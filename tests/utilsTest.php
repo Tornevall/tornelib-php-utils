@@ -313,4 +313,26 @@ class utilsTest extends TestCase
             $castWrongClass
         );
     }
+
+    /**
+     * @test
+     * @since 6.1.19
+     */
+    public function realExpects()
+    {
+        $generic = new Generic();
+        $ncTest = realpath(__DIR__ . '/../../tornelib-php-netcurl');
+
+        $expect = [
+            Constants::class => '9999.99',
+        ];
+        if ($ncTest) {
+            $expect[$ncTest] = '9999.99';
+        }
+        $generic->setExpectedVersions($expect);
+
+        $result = $generic->getExpectationsReal();
+        $constants = $result['TorneLIB\Exception\Constants'];
+        static::assertTrue(count($result)>=1 && (bool)preg_match('/^6.1/', $constants));
+    }
 }
